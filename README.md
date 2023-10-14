@@ -11,7 +11,7 @@
 
 ## HW-03 Project Newspaper
 
-<b> комманды в </b> <u>/NewsPaper/commands_HW-03.md</u>
+<b> комманды в </b> <u> /NewsPaper/commands_HW-03.md </u>
 
 ### Описание моделей
 
