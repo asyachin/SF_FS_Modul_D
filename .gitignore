@@ -3,6 +3,8 @@
 .temp/
 .idea/
 SF/
+LocLib/
+D2_McDonalds/
 
 Classes_Objects_python-29.07.ipynb
 
@@ -15,6 +17,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+
 .Python
 build/
 develop-eggs/
