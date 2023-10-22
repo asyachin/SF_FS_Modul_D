@@ -1,0 +1,10 @@
+{% extends 'layout/default.html' %}
+{% block title %}
+{{ news_detail.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ news_detail.title }}</h1>
+<p>Дата публикации: {{ news_detail.created_at|date:"d.m.Y" }}</p>
+<p>{{ news_detail.content }}</p>
+{% endblock content %}
