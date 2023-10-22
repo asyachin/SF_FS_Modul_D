@@ -44,6 +44,14 @@ class Post(models.Model):
     def preview(self):
         return f"{self.content[:124]}..."
 
+    def __str__(self):
+        return (f'Title: {self.title}'
+                f'Author: {self.author}'
+                f'Rating: {self.rating}'
+                f'news_type: {self.news_type}'
+                f'created_at: {self.created_at}'
+                f'categories: {self.categories}'
+                f'content: {self.content}')
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
