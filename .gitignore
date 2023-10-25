@@ -49,7 +49,7 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 D1_tutorial/
-D2_McDonalds/
+mc_donalds/
 htmlcov/
 .tox/
 .nox/
