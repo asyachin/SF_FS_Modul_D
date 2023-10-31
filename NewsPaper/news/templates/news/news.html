@@ -10,11 +10,13 @@ News
 
 {% for article in news %}
 <div class="news-item">
-    <h2>{{ article.title|censor }}</h2>
-    <p>Publication Date: {{ article.created_at|date:"d.m.Y" }}</p>
+    <h3>{{ article.title|censor }}</h3>
+    <p>Publication Date: {{ article.created_at|date:"d.m.Y" }} Author: {{article.Author}} Rating: {{article.Rating}}</p>
     <p>{{ article.content|slice:":50" |censor }}{% if article.content|length > 50 %}...{% endif %}</p>
 </div>
 <hr>
 {% endfor %}
+
+{% include './parts/paginator.html' %}
 
 {% endblock content %}

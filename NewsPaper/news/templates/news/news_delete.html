@@ -1,0 +1,19 @@
+{% extends 'layout/default.html' %}
+{% block title %}
+Delete News: {{ post.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>Delete News: {{ post.title }}</h1>
+<hr>
+
+<p>Вам действительно не нравится эта новость и вы хотите ее удалть?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Удалить</button>
+</form>
+
+<a href="{% url 'news_list' %}">Вернуться на страницу со списком новостей</a>
+
+{% endblock content %}

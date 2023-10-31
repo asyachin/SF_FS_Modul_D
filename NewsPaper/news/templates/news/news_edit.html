@@ -1,0 +1,18 @@
+{% extends 'layout/default.html' %}
+{% block title %}
+Edit News: {{ post.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>Edit News: {{ post.title }}</h1>
+<hr>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save Changes</button>
+</form>
+
+<a href="{% url 'news_detail' pk=post.pk %}">Back to News Details</a>
+
+{% endblock content %}

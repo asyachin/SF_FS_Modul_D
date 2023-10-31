@@ -1,0 +1,43 @@
+html
+Copy code
+{% extends 'layout/default.html' %}
+{% block title %}
+News Search
+{% endblock title %}
+
+{% block content %}
+<style>
+    .input-field {
+      display: block;
+      margin-bottom: 10px;
+      width: 20%;
+    }
+  </style>
+<h1>News Search</h1>
+<hr>
+
+<form method="GET" action="{% url 'news_search' %}">
+    <label for="date_filter">Filter by Date (YYYY-MM-DD):</label>
+    <input class="input-field" type="text" id="date_filter" name="date_filter" value="{{ request.GET.date_filter }}"><br>
+
+    <label for="title_filter">Filter by Title:</label>
+    <input class="input-field" type="text" id="title_filter" name="title_filter" value="{{ request.GET.title_filter }}"><br>
+
+    <label for="author_filter">Filter by Author Username:</label>
+    <input class="input-field" type="text" id="author_filter" name="author_filter" value="{{ request.GET.author_filter }}"><br>
+
+    <input type="submit" value="Search">
+</form>
+
+<hr>
+
+{% for article in news %}
+<div class="news-item">
+    <h2>{{ article.title }}</h2>
+    <p>Publication Date: {{ article.created_at|date:"d.m.Y" }}</p>
+    <p>{{ article.content }}</p>
+</div>
+<hr>
+{% endfor %}
+
+{% endblock content %}
