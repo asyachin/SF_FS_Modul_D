@@ -1,8 +1,12 @@
+from typing import Any
+from django.db import models
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView # импортируем класс, который говорит нам о том, что в этом представлении мы будем выводить список объектов из БД
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView # импортируем класс, который говорит нам о том, что в этом представлении мы будем выводить список объектов из БД
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Category, Post, Comment, Author # импортируем нашу модель
 from django.core.paginator import Paginator
 from .forms import PostForm
+from django.urls import reverse_lazy
 
 class NewsList(ListView):
     model = Post # указываем модель, объекты которой мы будем выводить
@@ -56,21 +60,15 @@ def news_add(request):
         form = PostForm()
     return render(request, 'news/news_add.html', {'form': form})
 
-def news_edit(request, pk):
-    post = Post.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'news/news_edit.html', {'form': form, 'post': post})
+class NewsEdit(LoginRequiredMixin, UpdateView):
+    model = Post
+    template_name = 'news/news_edit.html'
+    form_class = PostForm
 
-def news_delete(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-
-    if request.method == 'POST':
-        post.delete()
-        return redirect('news_list')
-
-    return render(request, 'news/news_delete.html', {'post': post})
+    def get_success_url(self):
+        return reverse_lazy('news_edit', kwargs={'pk': self.object.pk})
+    
+class NewsDelete(DeleteView):
+    template_name = 'news/news_delete.html'
+    queryset = Post.objects.all()
+    success_url = reverse_lazy('news_list')
