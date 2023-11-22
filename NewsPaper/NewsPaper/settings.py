@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'news',
+    'sign',
+    'protect',
 ]
 
 MIDDLEWARE = [
@@ -112,7 +114,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-LOGIN_URL = '/user/login/'
+LOGIN_URL = '/sign/login/'
+LOGIN_REDIRECT_URL = '/'
 
 
 # Static files (CSS, JavaScript, Images)
