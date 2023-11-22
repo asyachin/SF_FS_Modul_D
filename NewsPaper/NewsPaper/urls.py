@@ -22,7 +22,7 @@ from django.contrib.auth.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('protect.urls')),
+    path('', include('news.urls')),
     path('news/', include('news.urls')),
     path('user/login/', LoginView.as_view(), name='login'),
     path('sign/', include('sign.urls')),
