@@ -16,14 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include # импортируем функцию include, которая позволит сделать вложенность приложений
-from django.contrib.auth.views import LoginView
-
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('news.urls')),
+    path('', include('protect.urls')),
     path('news/', include('news.urls')),
-    path('user/login/', LoginView.as_view(), name='login'),
     path('sign/', include('sign.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
