@@ -13,11 +13,9 @@ News
     <h3>{{ article.title|censor }}</h3>
     <p>Publication Date: {{ article.created_at|date:"d.m.Y" }} Author: {{article.Author}} Rating: {{article.Rating}}</p>
     <p>{{ article.content|slice:":50" |censor }}{% if article.content|length > 50 %}...{% endif %}</p>
-    {% if user.is_not_author %}
-				
-    {% else %}
-        <a href="/news/{{ article.id }}/edit/">Edit</a>
-        <a href="/news/{{ article.id }}/delete/">Delete</a>
+    {% if user.is_authenticated %}
+    <a href="/news/{{ article.id }}/edit/">Edit</a>
+    <a href="/news/{{ article.id }}/delete/">Delete</a>
     {% endif %}
 </div>
 <hr>
