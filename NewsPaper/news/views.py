@@ -2,22 +2,11 @@ from typing import Any
 from django.db import models
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Category, Post, Comment, Author # импортируем нашу модель
 from django.core.paginator import Paginator
 from .forms import PostForm
 from django.urls import reverse_lazy
-
-
-class AuthorRequiredMixin(PermissionRequiredMixin):
-    def has_permission(self):
-        # Для операций редактирования и удаления
-        if 'pk' in self.kwargs:
-            post = get_object_or_404(Post, pk=self.kwargs['pk'])
-            return self.request.user == post.author.user or self.request.user.groups.filter(name='authors').exists()
-        # Для операции добавления
-        else:
-            return self.request.user.groups.filter(name='authors').exists()
 
 class NewsList(ListView):
     model = Post 
@@ -59,7 +48,7 @@ def news_search(request):
     }   
     return render(request, 'news/news_search.html', context)
 
-class NewsAdd(LoginRequiredMixin, AuthorRequiredMixin, CreateView):
+class NewsAdd(LoginRequiredMixin, CreateView):
     model = Post
     template_name = 'news/news_add.html'
     form_class = PostForm
@@ -68,7 +57,7 @@ class NewsAdd(LoginRequiredMixin, AuthorRequiredMixin, CreateView):
     def form_valid(self, form):
         return super().form_valid(form)
     
-class NewsEdit(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+class NewsEdit(LoginRequiredMixin, UpdateView):
     model = Post
     template_name = 'news/news_edit.html'
     form_class = PostForm
@@ -76,7 +65,7 @@ class NewsEdit(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('news_edit', kwargs={'pk': self.object.pk})
     
-class NewsDelete(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
+class NewsDelete(LoginRequiredMixin, DeleteView):
     template_name = 'news/news_delete.html'
     queryset = Post.objects.all()
     success_url = reverse_lazy('news_list')
