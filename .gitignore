@@ -135,7 +135,6 @@ celerybeat.pid
 
 # Environments
 SF_D/
-SF_D2/
 .env
 .venv
 .tlgbot/
