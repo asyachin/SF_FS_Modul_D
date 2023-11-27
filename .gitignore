@@ -18,7 +18,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
-*.zip
+231124_newspaper.zip
 .Python
 build/
 develop-eggs/
