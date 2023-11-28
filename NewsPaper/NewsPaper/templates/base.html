@@ -15,6 +15,19 @@
 {% block title %}
 {% endblock title %}
 </title>
+{% block head %}
+<style>
+    .news-item h3 a {
+        text-decoration: none;  /* Убирает подчеркивание */
+        color: inherit;  /* Цвет текста будет таким же, как у остального текста в h3 */
+    }
+
+    /* Для изменения стиля при наведении */
+    .news-item h3 a:hover {
+        text-decoration: underline;  /* или другой стиль, который вы хотите применить */
+    }
+</style>
+{% endblock head %}
 </head>
 <body>
 {% include './layout/parts/header.html' %}

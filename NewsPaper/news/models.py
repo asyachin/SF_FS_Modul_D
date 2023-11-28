@@ -12,11 +12,20 @@ class Author(models.Model):
         
         self.rating = post_rating + comment_rating + post_comment_rating
         self.save()
+        
+    def __str__(self):
+        return self.user.get_full_name() or self.user.username
+    
+class Subscriber(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
-
-
+    subscribers = models.ManyToManyField('Subscriber', through='SubscriberCategory')
+    
+    def __str__(self):
+        return self.name
+    
 class Post(models.Model):
     article = 'A'
     news = 'N'
@@ -32,6 +41,9 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     rating = models.FloatField(default=0.0)
+    views = models.IntegerField(default=0)
+    likes = models.ManyToManyField(User, related_name='liked_posts')
+    dislikes = models.ManyToManyField(User, related_name='disliked_posts')
 
     def like(self):
         self.rating += 1
@@ -68,8 +80,14 @@ class Comment(models.Model):
         self.rating -= 1
         self.save()
 
-
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.post.title}"
+    
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+
+class SubscriberCategory(models.Model):
+    subscriber = models.ForeignKey(Subscriber, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)

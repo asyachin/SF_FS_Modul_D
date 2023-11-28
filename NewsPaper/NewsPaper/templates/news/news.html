@@ -4,14 +4,28 @@
 News
 {% endblock title %}
 
+{% block head %}
+<style>
+    .news-item h3 a {
+        text-decoration: none;  /* Убирает подчеркивание */
+        color: inherit;  /* Цвет текста будет таким же, как у остального текста в h3 */
+    }
+
+    /* Для изменения стиля при наведении */
+    .news-item h3 a:hover {
+        text-decoration: underline;  /* или другой стиль, который вы хотите применить */
+    }
+</style>
+{% endblock head %}
+
 {% block content %}
 <h1>News</h1>
 <hr>
 
 {% for article in news %}
 <div class="news-item">
-    <h3>{{ article.title|censor }}</h3>
-    <p>Publication Date: {{ article.created_at|date:"d.m.Y" }} Author: {{article.Author}} Rating: {{article.Rating}}</p>
+    <h3><a href="{% url 'news_detail' article.id %}">{{ article.title|censor }}</a></h3>
+    <p>Publication Date: {{ article.created_at|date:"d.m.Y" }} Author: {{ article.author }} Rating: {{ article.rating }}</p>
     <p>{{ article.content|slice:":50" |censor }}{% if article.content|length > 50 %}...{% endif %}</p>
     {% if user.is_authenticated %}
     <a href="/news/{{ article.id }}/edit/">Edit</a>

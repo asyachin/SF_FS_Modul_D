@@ -1,9 +1,12 @@
 from typing import Any
 from django.db import models
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
+from django.views.decorators.http import require_POST
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Category, Post, Comment, Author # импортируем нашу модель
+from django.contrib.auth.decorators import login_required
+from .models import Category, Post, Subscriber, SubscriberCategory, Comment, Author # импортируем нашу модель
 from django.core.paginator import Paginator
 from .forms import PostForm
 from django.urls import reverse_lazy
@@ -36,6 +39,21 @@ class NewsDetail(DetailView):
 
     def get_queryset(self):
         return Post.objects.order_by('-created_at')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['is_subscribed'] = SubscriberCategory.objects.filter(
+                subscriber__user=self.request.user, 
+                category__in=self.object.categories.all()
+            ).exists()
+        return context
+    
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        obj.views += 1
+        obj.save()
+        return obj
 
 def news_search(request):
     date_filter = request.GET.get('date_filter', None)
@@ -59,13 +77,15 @@ def news_search(request):
     }   
     return render(request, 'news/news_search.html', context)
 
+
 class NewsAdd(LoginRequiredMixin, AuthorRequiredMixin, CreateView):
     model = Post
     template_name = 'news/news_add.html'
     form_class = PostForm
     success_url = reverse_lazy('news_list')
-
+    
     def form_valid(self, form):
+        form.instance.author = Author.objects.get(user=self.request.user) 
         return super().form_valid(form)
     
 class NewsEdit(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
@@ -80,3 +100,19 @@ class NewsDelete(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
     template_name = 'news/news_delete.html'
     queryset = Post.objects.all()
     success_url = reverse_lazy('news_list')
+    
+@login_required
+@require_POST
+def subscribe(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    subscriber, created = Subscriber.objects.get_or_create(user=request.user)
+    SubscriberCategory.objects.get_or_create(subscriber=subscriber, category=category)
+    return JsonResponse({'status': 'subscribed'})
+
+@login_required
+@require_POST
+def unsubscribe(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    subscriber = get_object_or_404(Subscriber, user=request.user)
+    SubscriberCategory.objects.filter(subscriber=subscriber, category=category).delete()
+    return JsonResponse({'status': 'unsubscribed'})
