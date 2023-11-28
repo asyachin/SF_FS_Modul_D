@@ -1,16 +1,17 @@
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k@3)yu9im27vc=jlfev1^$6!cutyr*+(-+f83-cosjq4@f2n6s'
+SECRET_KEY = os.getenv('SECRET_KEY') # настройка задаётся в файле .env
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -121,6 +122,15 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none' # 'none' - без подтверждения, 'optional' - с подтверждением, 'mandatory' - обязательно
+
+EMAIL_HOST = ''
+EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # ваше имя пользователя, например, если ваша почта user@yandex.ru, то сюда надо писать user, иными словами, это всё то что идёт до собаки
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # пароль от почты
+EMAIL_USE_SSL = True  # Яндекс использует ssl, подробнее о том, что это, почитайте в дополнительных источниках, но включать его здесь обязательно
+EMAIL_USE_TLS = False  
+SERVER_EMAIL = 'info@your.domain'
+DEFAULT_FROM_EMAIL = ''  # почта, с которой будет отправляться письмо'
 
 
 # Static files (CSS, JavaScript, Images)
