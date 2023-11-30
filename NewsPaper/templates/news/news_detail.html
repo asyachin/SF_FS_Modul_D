@@ -13,29 +13,20 @@
 <p>{{ news_detail.content }}</p>
 <p>Автор: {{ news_detail.author.user.username }}</p>
 <p>Категория: {% for category in news_detail.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-<var name="article_id" value="{{ news_detail.id }}"></var>
-<p>Добавить категорию:</p>
-<select name="category" id="add_category" onchange="addCategory()">
-    {% for category in all_categories %}
-        <option value="{{ category.id }}">{{ category.name }}</option>
+
+{% if user.is_authenticated %}
+    {% for category in news_detail.categories.all %}
+        {% if is_subscribed %}
+            <form action="{% url 'unsubscribe' news_detail.id category.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Отписаться</button>
+            </form>
+        {% else %}
+            <form action="{% url 'subscribe' news_detail.id category.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Подписаться</button>
+            </form>
+        {% endif %}
     {% endfor %}
-</select>
-<script src="{% static 'js/news_cat.js' %}"></script>
-
-
-<p>Количество просмотров: {{ news_detail.views }}</p>
-<p>Количество комментариев: {{ news_detail.comments.count }}</p>
-<p>Количество лайков: {{ news_detail.likes.count }} <br>
-	Количество дизлайков: {{ news_detail.dislikes.count }}</p>
-
-	{% if news_detail.categories.exists %}
-	{% if user.is_authenticated %}
-			<a href="#" id="subscription-link" 
-				 data-category-id="{{ news_detail.categories.first.id }}"
-				 data-subscribed="{% if is_subscribed %}true{% else %}false{% endif %}">
-					{% if is_subscribed %}Отписаться{% else %}Подписаться{% endif %}
-			</a>
-	{% endif %}
 {% endif %}
-
 {% endblock content %}

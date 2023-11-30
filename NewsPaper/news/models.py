@@ -15,9 +15,6 @@ class Author(models.Model):
         
     def __str__(self):
         return self.user.get_full_name() or self.user.username
-    
-class Subscriber(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -86,7 +83,9 @@ class Comment(models.Model):
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
+    
+class Subscriber(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class SubscriberCategory(models.Model):
     subscriber = models.ForeignKey(Subscriber, on_delete=models.CASCADE)

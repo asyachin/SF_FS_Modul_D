@@ -104,19 +104,19 @@ class NewsDelete(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
     
 @login_required
 @require_POST
-def subscribe(request, category_id):
+def subscribe(request, article_id, category_id):
     category = get_object_or_404(Category, id=category_id)
     subscriber, created = Subscriber.objects.get_or_create(user=request.user)
     SubscriberCategory.objects.get_or_create(subscriber=subscriber, category=category)
-    return JsonResponse({'status': 'subscribed'})
+    return redirect('news_detail', pk=article_id)
 
 @login_required
 @require_POST
-def unsubscribe(request, category_id):
+def unsubscribe(request, article_id, category_id):
     category = get_object_or_404(Category, id=category_id)
     subscriber = get_object_or_404(Subscriber, user=request.user)
     SubscriberCategory.objects.filter(subscriber=subscriber, category=category).delete()
-    return JsonResponse({'status': 'unsubscribed'})
+    return redirect('news_detail', pk=article_id)
 
 @login_required
 def add_category_to_article(request, article_id, category_id):
