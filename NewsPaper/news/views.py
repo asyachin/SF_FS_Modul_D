@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from django.views.decorators.http import require_POST
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from .models import Category, Post, Subscriber, SubscriberCategory, Comment, Author # импортируем нашу модель
 from django.core.paginator import Paginator
@@ -42,6 +42,7 @@ class NewsDetail(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['all_categories'] = Category.objects.all()
         if self.request.user.is_authenticated:
             context['is_subscribed'] = SubscriberCategory.objects.filter(
                 subscriber__user=self.request.user, 
@@ -116,3 +117,10 @@ def unsubscribe(request, category_id):
     subscriber = get_object_or_404(Subscriber, user=request.user)
     SubscriberCategory.objects.filter(subscriber=subscriber, category=category).delete()
     return JsonResponse({'status': 'unsubscribed'})
+
+@login_required
+def add_category_to_article(request, article_id, category_id):
+    article = get_object_or_404(Post, pk=article_id)
+    category = get_object_or_404(Category, pk=category_id)
+    article.categories.add(category)
+    return redirect('news_detail', pk=article_id)

@@ -26,7 +26,7 @@ News
 <div class="news-item">
     <h3><a href="{% url 'news_detail' article.id %}">{{ article.title|censor }}</a></h3>
     <p>Publication Date: {{ article.created_at|date:"d.m.Y" }} Author: {{ article.author }} Rating: {{ article.rating }}</p>
-    <p>{{ article.content|slice:":50" |censor }}{% if article.content|length > 50 %}...{% endif %}</p>
+    <p>{{ article.content|slice:":150" |censor }}{% if article.content|length > 150 %}...{% endif %}</p>
     {% if user.is_authenticated %}
     <a href="/news/{{ article.id }}/edit/">Edit</a>
     <a href="/news/{{ article.id }}/delete/">Delete</a>
