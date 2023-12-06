@@ -10,6 +10,7 @@ from .models import Category, Post, Subscriber, SubscriberCategory, Comment, Aut
 from django.core.paginator import Paginator
 from .forms import PostForm
 from django.urls import reverse_lazy
+from django.core.mail import send_mail
 
 
 class AuthorRequiredMixin(PermissionRequiredMixin):
@@ -108,6 +109,7 @@ def subscribe(request, article_id, category_id):
     category = get_object_or_404(Category, id=category_id)
     subscriber, created = Subscriber.objects.get_or_create(user=request.user)
     SubscriberCategory.objects.get_or_create(subscriber=subscriber, category=category)
+
     return redirect('news_detail', pk=article_id)
 
 @login_required
@@ -124,3 +126,4 @@ def add_category_to_article(request, article_id, category_id):
     category = get_object_or_404(Category, pk=category_id)
     article.categories.add(category)
     return redirect('news_detail', pk=article_id)
+

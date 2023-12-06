@@ -22,7 +22,7 @@
                 <button type="submit">Отписаться</button>
             </form>
         {% else %}
-            <form action="{% url 'subscribe' news_detail.id category.id %}" method="post">
+            <form action="{% url 'subscribe' article_id=news_detail.id category_id=category.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Подписаться</button>
             </form>

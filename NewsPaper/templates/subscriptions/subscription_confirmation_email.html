@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load censor_filters %}
+{% block title %}
+Subscription Confirmation
+{% endblock title %}
+
+{% block head %}
+<style>
+	body {
+			font-family: Arial, sans-serif;
+			line-height: 1.6;
+	}
+	.container {
+			width: 80%;
+			margin: 0 auto;
+			background-color: #f2f2f2;
+			padding: 20px;
+	}
+	.message {
+			background-color: #ffffff;
+			padding: 20px;
+			border-radius: 5px;
+	}
+	.footer {
+			text-align: center;
+			margin-top: 20px;
+			font-size: 0.9em;
+	}
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="container">
+	<div class="message">
+			<h1>Subscription Confirmation</h1>
+			<p>Hello {{ user.username }},</p>
+			<p>Thank you for subscribing to updates in the "<strong>{{ category.name }}</strong>" category on NewsAgg.</p>
+			<p>You will now receive email notifications about new posts in this category.</p>
+			<p>If you did not subscribe to this category or wish to unsubscribe, please adjust your subscription settings in your account.</p>
+	</div>
+	<div class="footer">
+			<p>&copy; {{ current_year }} NewsAgg. All rights reserved.</p>
+	</div>
+</div>
+{% endblock content %}

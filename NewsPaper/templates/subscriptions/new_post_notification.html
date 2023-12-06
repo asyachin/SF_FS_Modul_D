@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load censor_filters %}
+{% block title %}
+{{ post.title }}
+{% endblock title %}
+
+{% block head %}
+
+{% endblock head %}
+
+{% block content %}
+
+<h1>{{ post.title }}</h1>
+<p>{{ post.text|truncatechars:50 }}</p>
+<p>Здравствуй, {{ user.username }}. Новая статья в твоём любимом разделе!</p>
+<p>Автор: {{ post.author.user.username }}</p>
+
+{% endblock content %}

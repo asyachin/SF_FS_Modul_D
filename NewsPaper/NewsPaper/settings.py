@@ -3,8 +3,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-
-load_dotenv()
+load_dotenv() 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,16 +119,16 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none' # 'none' - без подтверждения, 'optional' - с подтверждением, 'mandatory' - обязательно
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # 'none' - без подтверждения, 'optional' - с подтверждением, 'mandatory' - обязательно
 
-EMAIL_HOST = ''
-EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # ваше имя пользователя, например, если ваша почта user@yandex.ru, то сюда надо писать user, иными словами, это всё то что идёт до собаки
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # пароль от почты
-EMAIL_USE_SSL = True  # Яндекс использует ssl, подробнее о том, что это, почитайте в дополнительных источниках, но включать его здесь обязательно
-EMAIL_USE_TLS = False  
-SERVER_EMAIL = 'info@your.domain'
-DEFAULT_FROM_EMAIL = ''  # почта, с которой будет отправляться письмо'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = False  
+EMAIL_USE_TLS = True  
+SERVER_EMAIL = os.getenv('SERVER_EMAIL')
+DEFAULT_FROM_EMAIL = ''
 
 
 # Static files (CSS, JavaScript, Images)
