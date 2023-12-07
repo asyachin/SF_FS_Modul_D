@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Author, Post, SubscriberCategory
+from .models import Author, Post, SubscriberCategory, PostCategory
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import logging
@@ -39,11 +39,13 @@ def send_subscription_confirmation_email(sender, instance, created, **kwargs):
         send_mail(subject, message, 'team@newspaper.com', [user.email], html_message=html_message)
         
         
-@receiver(post_save, sender=Post)
+@receiver(post_save, sender=PostCategory)
 def send_new_post_notification(sender, instance, created, **kwargs):
     if created:
         logger.debug(f"Отправка уведомления о новой статье для статьи {instance.title}")
         categories = instance.categories.all()
+        print(categories)
+'''        categories = instance.categories.all()
         subscribers = set()
         for category in categories:
             for subscriber in category.subscribers.all():
@@ -59,4 +61,4 @@ def send_new_post_notification(sender, instance, created, **kwargs):
                 'post': instance
             })
             send_mail(subject, message, 'team@newspaper.com', [subscriber.user.email], html_message=html_message)
-            logger.debug(f"Отправлено уведомление о новой статье для {subscriber.user.username} на почту {subscriber.user.email}")
+            logger.debug(f"Отправлено уведомление о новой статье для {subscriber.user.username} на почту {subscriber.user.email}")'''
