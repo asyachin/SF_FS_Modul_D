@@ -5,7 +5,7 @@
 
 {% block head %}
 {% load static %}
-<!-- Здесь может быть подключен JavaScript для управления модальным окном или выпадающим списком -->
+<script src="{% static 'js/add_cat.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
@@ -17,20 +17,22 @@
 <!-- Отображение категорий статьи -->
 {% if user.is_authenticated %}
     {% for category in news_detail.categories.all %}
-        <p>Категория: {{ category.name }}
-        {% if category.id in subscribed_category_ids %}
-            <form action="{% url 'unsubscribe' news_detail.id category.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Отписаться</button>
-            </form>
-        {% else %}
-            <form action="{% url 'subscribe' news_detail.id category.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Подписаться</button>
-            </form>
-        {% endif %}
+        <p style="display: inline;">
+            Категория: {{ category.name }} &nbsp; <!-- Добавлено неразрывное пробело между названием категории и ссылкой -->
+            {% if category.id in subscribed_category_ids %}
+                <form id="unsubscribe-form-{{category.id}}" action="{% url 'unsubscribe' news_detail.id category.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <a href="javascript:;" onclick="document.getElementById('unsubscribe-form-{{category.id}}').submit();" style="text-decoration: none;">Отписаться</a>
+                </form>
+            {% else %}
+                <form id="subscribe-form-{{category.id}}" action="{% url 'subscribe' news_detail.id category.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <a href="javascript:;" onclick="document.getElementById('subscribe-form-{{category.id}}').submit();" style="text-decoration: none;">Подписаться</a>
+                </form>
+            {% endif %}
         </p>
     {% endfor %}
+
 
     <br>
     <!-- Кнопка для добавления новой категории -->
@@ -49,12 +51,5 @@
         </form>
     </div>
 {% endif %}
-
-<script>
-    // JavaScript для управления отображением модального окна или выпадающего списка
-    document.getElementById('addCategoryBtn').addEventListener('click', function() {
-        document.getElementById('categoryModal').style.display = 'block';
-    });
-</script>
 
 {% endblock content %}
