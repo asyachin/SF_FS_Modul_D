@@ -61,4 +61,4 @@ def send_new_post_notification(sender, instance, created, **kwargs):
                 'post': instance
             })
             send_mail(subject, message, 'team@newspaper.com', [subscriber.user.email], html_message=html_message)
-            logger.debug(f"Отправлено уведомление о новой статье для {subscriber.user.username} на почту {subscriber.user.email}")'''
+            logger.debug(f"Отправлено уведомление о новой статье для {subscriber.user.username} на почту {subscriber.user.email}")
