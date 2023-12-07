@@ -39,13 +39,13 @@ def send_subscription_confirmation_email(sender, instance, created, **kwargs):
         send_mail(subject, message, 'team@newspaper.com', [user.email], html_message=html_message)
         
         
-@receiver(post_save, sender=PostCategory)
+@receiver(post_save, sender=Post)
 def send_new_post_notification(sender, instance, created, **kwargs):
     if created:
         logger.debug(f"Отправка уведомления о новой статье для статьи {instance.title}")
         categories = instance.categories.all()
         print(categories)
-'''        categories = instance.categories.all()
+        categories = instance.categories.all()
         subscribers = set()
         for category in categories:
             for subscriber in category.subscribers.all():
