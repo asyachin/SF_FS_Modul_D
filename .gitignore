@@ -23,6 +23,7 @@ __pycache__/
 # Distribution / packaging
 D5/
 LocLib/
+2_NewsPaper/
 
 *.zip
 .Python

@@ -4,16 +4,30 @@ from django.contrib.auth.models import User
 from .models import Author, Post, SubscriberCategory
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+import logging
+
+#logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=User)
 def create_author_profile(sender, instance, created, **kwargs):
     if created:
         Author.objects.get_or_create(user=instance)
         
-        
+
+@receiver(post_save, sender=User)
+def send_welcome_email(sender, instance, created, **kwargs):
+    if created:
+        #print(f"Отправка приветственного email пользователю {instance.username}") #test
+        subject = 'Добро пожаловать в NewsPaper!'
+        message = f'Здравствуй, {instance.username}. Мы рады приветствовать тебя в нашем приложении!'
+        html_message = render_to_string('sign/welcome_email.html', {'user': instance})
+        send_mail(subject, message,  'team@newspaper.com', [instance.email], html_message=html_message)
+
+    
 @receiver(post_save, sender=SubscriberCategory)
 def send_subscription_confirmation_email(sender, instance, created, **kwargs):
     if created:
+
         user = instance.subscriber.user
         category = instance.category
         subject = f'Подписка на категорию {category.name}'
@@ -22,19 +36,11 @@ def send_subscription_confirmation_email(sender, instance, created, **kwargs):
             'user': user,
             'category': category
         })
-        send_mail(subject, message, 'subscription@newsagg.com', [user.email], html_message=html_message)
+        send_mail(subject, message, 'team@newspaper.com', [user.email], html_message=html_message)
+        
         
 @receiver(post_save, sender=Post)
 def send_new_post_notification(sender, instance, created, **kwargs):
     if created:
-        for category in instance.categories.all():
-            subscribers = SubscriberCategory.objects.filter(category=category)
-            for subscriber in subscribers:
-                user = subscriber.subscriber.user
-                subject = instance.title
-                html_message = render_to_string('subscriptions/new_post_notification.html', {
-                    'post': instance,
-                    'user': user
-                })
-                subject_message = f'Здравствуй, {user.username}. Новая статья в твоём любимом разделе!'
-                send_mail(subject, subject_message, 'subscription@newsagg.com', [user.email], html_message=html_message)
+        print(f"Отправка уведомления о новой статье для статьи {instance.title}")
+        print(instance.category.name)

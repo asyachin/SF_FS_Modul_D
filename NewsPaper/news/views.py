@@ -44,11 +44,13 @@ class NewsDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_categories'] = Category.objects.all()
+
         if self.request.user.is_authenticated:
-            context['is_subscribed'] = SubscriberCategory.objects.filter(
-                subscriber__user=self.request.user, 
-                category__in=self.object.categories.all()
-            ).exists()
+            subscribed_categories = SubscriberCategory.objects.filter(
+                subscriber__user=self.request.user
+            ).values_list('category', flat=True)
+            context['subscribed_category_ids'] = list(subscribed_categories)
+
         return context
     
     def get_object(self, queryset=None):
@@ -121,9 +123,10 @@ def unsubscribe(request, article_id, category_id):
     return redirect('news_detail', pk=article_id)
 
 @login_required
-def add_category_to_article(request, article_id, category_id):
-    article = get_object_or_404(Post, pk=article_id)
-    category = get_object_or_404(Category, pk=category_id)
-    article.categories.add(category)
+def add_category_to_article(request, article_id):
+    if request.method == 'POST':
+        category_id = request.POST.get('category_id')
+        article = get_object_or_404(Post, pk=article_id)
+        category = get_object_or_404(Category, pk=category_id)
+        article.categories.add(category)
     return redirect('news_detail', pk=article_id)
-
