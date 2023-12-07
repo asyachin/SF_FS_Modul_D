@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import logging
 
-#logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=User)
 def create_author_profile(sender, instance, created, **kwargs):
@@ -42,5 +42,21 @@ def send_subscription_confirmation_email(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Post)
 def send_new_post_notification(sender, instance, created, **kwargs):
     if created:
-        print(f"Отправка уведомления о новой статье для статьи {instance.title}")
-        print(instance.category.name)
+        logger.debug(f"Отправка уведомления о новой статье для статьи {instance.title}")
+        categories = instance.categories.all()
+        subscribers = set()
+        for category in categories:
+            for subscriber in category.subscribers.all():
+                subscribers.add(subscriber)
+                logger.debug(subscriber.user.username)
+
+        for subscriber in subscribers:
+            subject = f'Новая статья "{instance.title}"'
+            message = f'Здравствуй, {subscriber.user.username}. В категории "{category.name}" опубликована новая статья "{instance.title}"!'
+            html_message = render_to_string('subscriptions/new_post_notification_email.html', {
+                'user': subscriber.user,
+                'category': category,
+                'post': instance
+            })
+            send_mail(subject, message, 'team@newspaper.com', [subscriber.user.email], html_message=html_message)
+            logger.debug(f"Отправлено уведомление о новой статье для {subscriber.user.username} на почту {subscriber.user.email}")
