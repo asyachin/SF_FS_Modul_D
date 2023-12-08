@@ -1,6 +1,7 @@
 from typing import Any
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.cache import cache
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -59,6 +60,10 @@ class Post(models.Model):
 
     def preview(self):
         return f"{self.content[:124]}..."
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'title-{self.pk}, content-{self.pk} ') # затем удаляем его из кэша, чтобы сбросить его
 
     def __str__(self):
         return (f'Title: {self.title}'

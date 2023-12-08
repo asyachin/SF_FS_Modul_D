@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from .forms import PostForm
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
+from django.core.cache import cache
 
 
 class AuthorRequiredMixin(PermissionRequiredMixin):
@@ -37,6 +38,17 @@ class NewsDetail(DetailView):
     model = Post
     template_name = 'news/news_detail.html'
     context_object_name = 'news_detail'
+    
+    def get_object(self, *args, **kwargs):
+        ''' функция переопределения метода получения объекта. Метод забирает значение
+        по ключу  и если его нет то забирает none. 
+        Если объекта нет в кэше, то он забирается из базы данных и записывается в кэш. Далее models.py'''
+        
+        obj = cache.get(f'news-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(*args, **kwargs)
+            cache.set(f'news-{self.kwargs["pk"]}', obj)
+        return obj
 
     def get_queryset(self):
         return Post.objects.order_by('-created_at')
