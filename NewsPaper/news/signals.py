@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import Author, Post, SubscriberCategory, PostCategory
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.db.models.signals import m2m_changed
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,12 +40,10 @@ def send_subscription_confirmation_email(sender, instance, created, **kwargs):
         send_mail(subject, message, 'team@newspaper.com', [user.email], html_message=html_message)
         
         
-@receiver(post_save, sender=Post)
+@receiver(m2m_changed, sender=Post) # изменить сигнал с post_save на m2m_changed, т.к. в момент создания статьи к ней еще не присвоены категории
 def send_new_post_notification(sender, instance, created, **kwargs):
     if created:
-        logger.debug(f"Отправка уведомления о новой статье для статьи {instance.title}")
-        categories = instance.categories.all()
-        print(categories)
+        print(f"Отправка уведомления о новой статье для статьи {instance.title}")
         categories = instance.categories.all()
         subscribers = set()
         for category in categories:
@@ -62,3 +61,5 @@ def send_new_post_notification(sender, instance, created, **kwargs):
             })
             send_mail(subject, message, 'team@newspaper.com', [subscriber.user.email], html_message=html_message)
             logger.debug(f"Отправлено уведомление о новой статье для {subscriber.user.username} на почту {subscriber.user.email}")
+# Connect the signal
+    post_save.connect(send_new_post_notification, sender=Post)
