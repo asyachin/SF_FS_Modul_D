@@ -7,6 +7,11 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+LOG_DIR = BASE_DIR / 'logs'
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
 
 SECRET_KEY = os.getenv('SECRET_KEY') # настройка задаётся в файле .env
 
@@ -146,18 +151,96 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+        'with_pathname': {
+            'format': '{levelname} {asctime} {pathname} {message}',
+            'style': '{',
+        },
+        'with_module': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'with_stack': {
+            'format': '{levelname} {asctime} {pathname} {message}',
+            'style': '{',
+            'exc_info': True,
+        },
+    },
     'handlers': {
-        'file': {
+        'console': {
             'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file_general': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
             'class': 'logging.FileHandler',
-            'filename': f'{BASE_DIR}/logfile.log',
+            'filename': f'{LOG_DIR}/general.log',
+            'formatter': 'with_module',
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': f'{LOG_DIR}/errors.log',
+            'formatter': 'with_stack',
+        },
+        'file_security': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': f'{LOG_DIR}/security.log',
+            'formatter': 'with_module',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'with_pathname',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['console', 'file_general'],
             'level': 'DEBUG',
             'propagate': True,
         },
-    },
+        'django.request': {
+            'handlers': ['console', 'file_errors', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console', 'file_errors', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['console', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db_backends': {
+            'handlers': ['console', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['file_security'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
 }
