@@ -21,6 +21,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+AVOR/
 D5/
 LocLib/
 2_NewsPaper/
